@@ -3,7 +3,7 @@
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
-;; (add-to-list 'default-frame-alist '(font . "mononoki-12"))
+(add-to-list 'default-frame-alist '(font . "Source Code Pro-12"))
 (add-to-list 'default-frame-alist '(height . 24))
 (add-to-list 'default-frame-alist '(width . 80))
 
@@ -15,12 +15,20 @@
                          ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 
+;; No Tabs
+(setq-default indent-tabs-mode nil)
+
 ;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
 
+(use-package linum-relative  
+  :ensure t 
+  :init
+  (linum-relative-mode 1)
+  (setq linum-relative-current-symbol ""))
 ;; Evil Mode Settings
 (use-package evil
   :ensure t
@@ -31,16 +39,17 @@
 (use-package evil-escape
   :ensure t
   :init
-  (setq-default evil-escape-key-sequence "jj")
+  (setq-default evil-escape-key-sequence "jk")
   :config
-  (setq-default evil-escape-delay 0.2)
   (evil-escape-mode 1))
 
 ;; Company
 (use-package company
   :ensure t
   :init
+  (global-company-mode 1)
  ) 
+
 
 ;; function to increment numbers
 (defun increment-number-at-point ()
@@ -49,7 +58,7 @@
   (or (looking-at "[0-9]+")
       (error "No number at point"))
   (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
-(global-set-key (kbd "C-a")) 'increment-number-at-point
+(global-set-key (kbd "C-a") 'increment-number-at-point)
 
 ;; function to decrement numbers
 (defun decrement-number-at-point ()
@@ -73,7 +82,7 @@
   :ensure t
   :init
   (setq helm-M-x-fuzzy-match t
-k  helm-mode-fuzzy-match t
+  helm-mode-fuzzy-match t
   helm-buffers-fuzzy-matching t
   helm-recentf-fuzzy-match t
   helm-locate-fuzzy-match t
@@ -140,7 +149,79 @@ k  helm-mode-fuzzy-match t
   :init
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
+(use-package rjsx-mode
+  :ensure t
+  :init
+) 
 ;; Show matching parens
 (setq show-paren-delay 0)
-(show-paren-mode delay 0)
+;; (show-paren-mode delay 0)
 
+
+(define-key js2-mode-map (kbd "M-.") nil)
+
+(use-package gxref
+  :ensure t
+  :init
+  :config)
+
+(use-package flycheck
+  :ensure t
+  :init
+  :config)
+
+;; Javascript mode
+(use-package js2-mode
+  :ensure t
+  :init
+  (setq js-basic-indent 2)
+  (setq-default js2-basic-indent 2
+                js2-basic-offset 2
+                js2-auto-indent-p t
+                js2-cleanup-whitespace t
+                js2-enter-indents-newline t
+                js2-indent-on-enter-key t
+                js2-global-externs (list "window" "module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON" "jQuery" "$"))
+(add-hook 'js2-mode-hook
+            (lambda ()
+              (push '("function" . ?ƒ) prettify-symbols-alist)))
+
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+                             )
+
+(use-package color-identifiers-mode
+  :ensure t
+  :init
+  (add-hook 'js2-mode-hook 'color-indentifers-mode))
+
+(use-package tern
+  :ensure t
+  :init (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+  :config 
+  (use-package company-tern
+    :ensure t
+    :init (add-to-list 'company-backends 'company-tern)))
+
+
+(linum-relative-global-mode 1)
+
+(use-package npm-mode
+  :ensure t
+  :init
+  :config 
+  (npm-global-mode 1))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (color-identifiers-mode company-tern tern color-indentifiers-mode flycheck npm-mode gxref which-key use-package rjsx-mode projectile neotree multi-term linum-relative hl-todo helm general evil-escape evil doom-themes company 0blayout))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

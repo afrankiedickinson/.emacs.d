@@ -1,1 +1,1 @@
-nil
+("~/EpicLocationService/" "~/" "~/Airbike/" "~/SafemateWebClient/" "~/.emacs.d/")
