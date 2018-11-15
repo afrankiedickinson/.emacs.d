@@ -1,1 +1,1 @@
-("~/EpicLocationService/" "~/" "~/Airbike/" "~/SafemateWebClient/" "~/.emacs.d/")
+("~/.emacs.d/" "~/SafemateWebClient/" "~/safemate-test/" "~/EpicLocationService/" "~/" "~/Airbike/")

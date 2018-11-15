@@ -1,0 +1,8 @@
+
+      data.forEach((val, index) => {
+       if (data[index].deviceSpec === 'WATCH') {
+          filter.eqFilters.deviceId.value = data[index].imei;
+          subscribe(urn, id, serviceKey, serviceName, filter, handler);
+       } else {
+       }
+      });

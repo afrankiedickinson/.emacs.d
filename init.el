@@ -15,6 +15,8 @@
                          ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 
+
+
 ;; No Tabs
 (setq-default indent-tabs-mode nil)
 
@@ -23,6 +25,88 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+
+(use-package evil-org
+  :ensure t
+  :after org
+  :config
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (evil-org-set-key-theme)))
+
+
+;;  (define-key evil-normal-state-map (kbd "C-cl") 'org-store-link)
+
+  (define-key global-map "\C-cl" 'org-store-link)
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys)
+  (setq org-log-done t)
+  (setq org-fast-tag-selection-single-key t)
+  (setq org-use-fast-todo-selection t)
+  (setq org-startup-truncated nil)
+
+(setq org-directory (expand-file-name "~/org"))
+(setq org-default-notes-file (concat org-directory "/mygtd.org"))
+(setq org-agenda-files '("~/org" "~/www/org" "~/www/_org"))
+
+(setq org-todo-keywords
+      '(
+        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+        ))
+
+(setq org-todo-keyword-faces
+      '(("IDEA" . (:foreground "GoldenRod" :weight bold))
+        ("NEXT" . (:foreground "IndianRed1" :weight bold))   
+        ("STARTED" . (:foreground "OrangeRed" :weight bold))
+        ("WAITING" . (:foreground "coral" :weight bold)) 
+        ("CANCELED" . (:foreground "LimeGreen" :weight bold))
+        ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
+        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
+        ))
+
+(setq org-tag-persistent-alist 
+      '((:startgroup . nil)
+        ("HOME" . ?h) 
+        ("RESEARCH" . ?r)
+        ("TEACHING" . ?t)
+        (:endgroup . nil)
+        (:startgroup . nil)
+        ("OS" . ?o) 
+        ("DEV" . ?d)
+        ("WWW" . ?w)
+        (:endgroup . nil)
+        (:startgroup . nil)
+        ("EASY" . ?e)
+        ("MEDIUM" . ?m)
+        ("HARD" . ?a)
+        (:endgroup . nil)
+        ("URGENT" . ?u)
+        ("KEY" . ?k)
+        ("BONUS" . ?b)
+        ("noexport" . ?x)  
+        )
+      )
+
+(setq org-tag-faces
+      '(
+        ("HOME" . (:foreground "GoldenRod" :weight bold))
+        ("RESEARCH" . (:foreground "GoldenRod" :weight bold))
+        ("TEACHING" . (:foreground "GoldenRod" :weight bold))
+        ("OS" . (:foreground "IndianRed1" :weight bold))   
+        ("DEV" . (:foreground "IndianRed1" :weight bold))   
+        ("WWW" . (:foreground "IndianRed1" :weight bold))
+        ("URGENT" . (:foreground "Red" :weight bold))  
+        ("KEY" . (:foreground "Red" :weight bold))  
+        ("EASY" . (:foreground "OrangeRed" :weight bold))  
+        ("MEDIUM" . (:foreground "OrangeRed" :weight bold))  
+        ("HARD" . (:foreground "OrangeRed" :weight bold))  
+        ("BONUS" . (:foreground "GoldenRod" :weight bold))
+        ("noexport" . (:foreground "LimeGreen" :weight bold))  
+        )
+)
+ )
 
 (use-package linum-relative  
   :ensure t 
@@ -132,14 +216,29 @@
   "at"  '(ansi-term :which-key "open terminal")
   ))
 
+(use-package evil-leader
+  :ensure t
+  :config
+  (global-evil-leader-mode))
+
 ;; Projectile
 (use-package projectile
   :ensure t
-  :init
-  (setq projectile-require-project-root nil)
+  :defer t
   :config
-  (projectile-mode 1))
+  (projectile-global-mode))
 
+;; Helm Projectile
+(use-package helm-projectile
+  :bind (("C-S-P" . helm-projectile-switch-project)
+         :map evil-normal-state-map
+         ("C-p" . helm-projectile))
+  :ensure t
+  :config
+  (evil-leader/set-key
+    "ps" 'helm-projectile-ag
+    "pa" 'helm-projectile-find-file-in-known-projects
+  ))
 ;; All The Icons
 (use-package all-the-icons :ensure t)
 
@@ -206,12 +305,22 @@
 
 (linum-relative-global-mode 1)
 
+(use-package kotlin-mode 
+  :ensure t
+  :init
+(add-to-list 'auto-mode-alist '("\\.kt$" . kotlin-mode))
+ ) 
+
 (use-package npm-mode
   :ensure t
   :init
   :config 
   (npm-global-mode 1))
 
+(defun my-evil-set-jump (&rest _)
+  (evil-set-jump))
+(advice-add 'evil-previous-line :before 'my-evil-set-jump)
+(advice-add 'evil-next-line :before 'my-evil-set-jump)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -219,7 +328,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (color-identifiers-mode company-tern tern color-indentifiers-mode flycheck npm-mode gxref which-key use-package rjsx-mode projectile neotree multi-term linum-relative hl-todo helm general evil-escape evil doom-themes company 0blayout))))
+    (evil-magit magit evil-org evil-leader helm-projectile color-identifiers-mode company-tern tern color-indentifiers-mode flycheck npm-mode gxref which-key use-package rjsx-mode projectile neotree multi-term linum-relative hl-todo helm general evil-escape evil doom-themes company 0blayout))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
