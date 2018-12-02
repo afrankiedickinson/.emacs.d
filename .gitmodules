@@ -1,0 +1,3 @@
+[submodule "evil-collection"]
+	path = evil-collection
+	url = https://github.com/emacs-evil/evil-collection.git

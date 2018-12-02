@@ -280,15 +280,8 @@
                 js2-cleanup-whitespace t
                 js2-enter-indents-newline t
                 js2-indent-on-enter-key t
-                js2-global-externs (list "window" "module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON" "jQuery" "$"))
-(add-hook 'js2-mode-hook
-            (lambda ()
-              (push '("function" . ?ƒ) prettify-symbols-alist)))
-
-(add-hook 'js2-mode-hook
-          (lambda () (flycheck-select-checker "javascript-eslint")))
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-                             )
+))
+ 
 (use-package color-identifiers-mode
   :ensure t
   :init
@@ -302,16 +295,12 @@
     :ensure t
     :init (add-to-list 'company-backends 'company-tern)))
 
+(use-package xref-js2
+  :ensure t
+  :init ;; (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+ )
 
 (linum-relative-global-mode 1)
-
-(use-package magit
-  :ensure t
-  :config
-  )
-
-(use-package evil-magit
-  :ensure t )
 
 (use-package kotlin-mode 
   :ensure t
@@ -336,7 +325,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (evil-magit magit evil-org evil-leader helm-projectile color-identifiers-mode company-tern tern color-indentifiers-mode flycheck npm-mode gxref which-key use-package rjsx-mode projectile neotree multi-term linum-relative hl-todo helm general evil-escape evil doom-themes company 0blayout))))
+    (xref-js2 evil-magit magit evil-org evil-leader helm-projectile color-identifiers-mode company-tern tern color-indentifiers-mode flycheck npm-mode gxref which-key use-package rjsx-mode projectile neotree multi-term linum-relative hl-todo helm general evil-escape evil doom-themes company 0blayout))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
